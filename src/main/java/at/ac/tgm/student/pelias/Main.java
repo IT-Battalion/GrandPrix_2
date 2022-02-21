@@ -11,7 +11,7 @@ import at.ac.tgm.student.pelias.methods.NetworkRequest;
  */
 public class Main {
     public static void main(String[] args) {
-        SketchyWaiter latch = new SketchyWaiter();
+        Waiter latch = new Waiter();
         Runner runner1 = new Runner(latch, new Fibonacci(44));
         Runner runner2 = new Runner(latch, new Babylon(1253120048));
         Runner runner3 = new Runner(latch, new NetworkRequest());
@@ -21,6 +21,13 @@ public class Main {
         t1.start();
         t2.start();
         t3.start();
-        latch.sketch(3);
+        latch.wait(3);
+        while (true) {
+            try {
+                System.out.println(latch.getQueue().takeLast());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

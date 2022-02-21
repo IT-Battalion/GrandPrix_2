@@ -1,8 +1,12 @@
 package at.ac.tgm.student.pelias;
 
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.LinkedBlockingDeque;
 
-public class SketchyWaiter {
+public class Waiter {
+    private BlockingDeque<String> queue;
     private final CopyOnWriteArrayList<String> ranking = new CopyOnWriteArrayList<>();
     private int readySignals = 0;
     private int needed = 0;
@@ -21,8 +25,9 @@ public class SketchyWaiter {
         }
     }
 
-    public synchronized void sketch(int needed) {
+    public synchronized void wait(int needed) {
         this.needed = needed;
+        this.queue = new LinkedBlockingDeque<>(needed * 3);
         while (readySignals != this.needed) {
             try {
                 this.wait();
@@ -30,6 +35,10 @@ public class SketchyWaiter {
                 e.printStackTrace();
             }
         }
+    }
+
+    public BlockingDeque<String> getQueue() {
+        return queue;
     }
 
     public synchronized void finished() {
