@@ -22,7 +22,7 @@ public class Main {
         t2.start();
         t3.start();
         latch.wait(3);
-        while (true) {
+        while (!latch.hasFinished()) {
             try {
                 System.out.println(latch.getQueue().takeLast());
             } catch (InterruptedException e) {

@@ -11,6 +11,8 @@ public class Waiter {
     private int readySignals = 0;
     private int needed = 0;
 
+    private int finished = 0;
+
     public void readySignal() {
         readySignals++;
     }
@@ -19,10 +21,9 @@ public class Waiter {
         while (this.needed != this.readySignals) {
             try {
                 this.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            } catch (InterruptedException e) {}
         }
+        this.notifyAll();
     }
 
     public synchronized void wait(int needed) {
@@ -31,9 +32,7 @@ public class Waiter {
         while (readySignals != this.needed) {
             try {
                 this.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            } catch (InterruptedException e) {}
         }
     }
 
@@ -44,5 +43,10 @@ public class Waiter {
     public synchronized void finished() {
         this.ranking.add(Thread.currentThread().getName());
         System.out.println(Thread.currentThread().getName() + " finished. #" + (this.ranking.indexOf(Thread.currentThread().getName()) + 1));
+        finished++;
+    }
+
+    public synchronized boolean hasFinished() {
+        return this.finished == this.needed;
     }
 }
